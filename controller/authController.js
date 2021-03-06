@@ -1,6 +1,7 @@
 const usersModel = require("../models/users-model");
 const jwt = require("jsonwebtoken");
 const { checkPassword } = require("../utils/checkpass");
+const { promisify } = require("util");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "cute cat", {
@@ -71,4 +72,50 @@ exports.login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ err });
   }
+};
+
+exports.protect = (adminOnly = false) => async (req, res, next) => {
+  try {
+    let token;
+
+    if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+    }
+    if (!token) {
+      return res.status(401).json({
+        msg: "login",
+      });
+    }
+
+    // jwt.verify(token,"cute cat", (err, result) => {});
+
+    const decoded = await promisify(jwt.verify)(token, "cute cat");
+
+    const frechUser = await usersModel.findById(decoded.id);
+    if (!frechUser) {
+      return res.status(401).json({
+        msg: "user does not exist",
+      });
+    }
+
+    if (adminOnly) {
+      if (frechUser.role === "user") {
+        return res.status(403).json({
+          msg: "u are not allowed access",
+        });
+      }
+    }
+    // if (!frechUser.checkPassChanged(token.iat)) {
+    //   return next(new appError("plz login again u changed password", 401));
+    // }
+    req.user = frechUser;
+    next();
+  } catch (err) {
+    console.log(err);
+    res.json({ err });
+  }
+};
+
+exports.checkAuth = (req, res) => {
+  res.json({ msg: "hey there", user: req.user });
 };
