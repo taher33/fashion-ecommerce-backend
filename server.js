@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const products = require("./routes/products");
+const users = require("./routes/users");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,7 @@ app.use(express.json());
 // app.use(express.static(path.join(__dirname, "imgs")));
 
 app.use("/products", products);
+app.use("/users", users);
 
 app.all("*", (req, res, next) => {
   // next(new appError(`cant find ${req.originalUrl} on this server`, 404));
@@ -43,7 +45,7 @@ mongoose.connect(
   `mongodb+srv://taher:${
     process.env.MONGO_DB_PASSWORD || "taher"
   }@pacebook.f21hd.mongodb.net/${
-    process.env.MONGO_DB_PASSWORD || "taher"
+    process.env.MONGO_DB_PASSWORD || "pacebook"
   }?retryWrites=true&w=majority`,
 
   {

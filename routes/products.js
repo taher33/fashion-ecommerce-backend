@@ -1,3 +1,4 @@
+const { json } = require("express");
 const express = require("express");
 const productsModel = require("../models/products-model");
 const router = express.Router();
@@ -15,11 +16,14 @@ router.post("/", async (req, res) => {
       title: "hey",
       name: "hey",
       price: 5,
+      stock: 5,
     });
     res.json({ msg: "yeah boy" });
   } catch (err) {
+    res.status(400).json({
+      err,
+    });
     console.log(err);
-    res.status(500);
   }
 });
 
