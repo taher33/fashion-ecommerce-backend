@@ -1,14 +1,9 @@
-const { json } = require("express");
 const express = require("express");
+const { getProducts } = require("../controller/product-controller");
 const productsModel = require("../models/products-model");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    msg: "yoo",
-    products: ["yi", "jz"],
-  });
-});
+router.get("/", getProducts);
 
 router.post("/", async (req, res) => {
   try {

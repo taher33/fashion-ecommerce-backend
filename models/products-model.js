@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, "can not be empty "],
   },
+  type: { type: String, enum: ["men", "women", "kids"], required: true },
 
   price: {
     type: Number,
