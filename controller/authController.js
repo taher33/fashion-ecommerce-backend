@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await usersModel.findOne({ email }).select("+password");
 
     if (
       user === null ||
@@ -69,8 +69,9 @@ exports.login = async (req, res) => {
     }
 
     createSendToken(user, 200, res);
-  } catch (error) {
-    res.status(500).json({ err });
+  } catch (err) {
+    console.log("yoo", err);
+    res.status(500).json({ err, msg: "yoo" });
   }
 };
 

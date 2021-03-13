@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const products = require("./routes/products");
 const users = require("./routes/users");
+const appError = require("./utils/appError");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,10 +36,7 @@ app.use("/products", products);
 app.use("/users", users);
 
 app.all("*", (req, res, next) => {
-  // next(new appError(`cant find ${req.originalUrl} on this server`, 404));
-  res.status(400).json({
-    msg: "error has acured",
-  });
+  next(new appError(`cant find ${req.originalUrl} on this server`, 404));
 });
 
 mongoose.connect(

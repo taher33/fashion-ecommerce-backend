@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
-  imgs: [String],
+  image: { type: String, required: [true, "must specify image"] },
 
   createdAt: { type: Date, default: Date.now() },
   modifiedAt: { type: Date },
