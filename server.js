@@ -31,6 +31,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 // app.use(express.static(path.join(__dirname, "imgs")));
+app.get("/", (req, res) => {
+  res.send("hey there");
+});
 
 app.use("/products", products);
 app.use("/users", users);
