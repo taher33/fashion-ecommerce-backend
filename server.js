@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 5000;
 
 const whiteList = [
   "https://fashion-ecommerce-lime.vercel.app",
+  "fashion-ecommerce-taher33.vercel.app",
+  "fashion-ecommerce-git-main-taher33.vercel.app",
+  "https://fashion-ecommerce-73s3nknkq-taher33.vercel.app",
   "http://localhost:3000",
 ];
 
@@ -20,7 +23,7 @@ app.use(
     credentials: true,
     // origin: "http://localhost:3000",
     origin: function (origin, callback) {
-      if (whiteList.indexOf(origin) !== -1) {
+      if (whiteList.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
