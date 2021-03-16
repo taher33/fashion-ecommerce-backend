@@ -10,10 +10,22 @@ const appError = require("./utils/appError");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const whiteList = [
+  "https://fashion-ecommerce-lime.vercel.app",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
     credentials: true,
-    origin: "https://fashion-ecommerce-lime.vercel.app/",
+    // origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (whiteList.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   })
 );
 
