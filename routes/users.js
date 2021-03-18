@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
     products: ["yi", "jz"],
   });
 });
-router.get("/checkAuth", protect(true), checkAuth);
+router.get("/checkAuth", protect(), checkAuth);
 router.post("/signup", signup);
 router.post("/login", login);
 

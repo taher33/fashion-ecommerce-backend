@@ -2,6 +2,7 @@ const usersModel = require("../models/users-model");
 const jwt = require("jsonwebtoken");
 const { checkPassword } = require("../utils/checkpass");
 const { promisify } = require("util");
+const appError = require("../utils/appError");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "cute cat", {
@@ -82,10 +83,9 @@ exports.protect = (adminOnly = false) => async (req, res, next) => {
     if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
+
     if (!token) {
-      return res.status(401).json({
-        msg: "login",
-      });
+      return next(new appError("login please", 401));
     }
 
     // jwt.verify(token,"cute cat", (err, result) => {});
@@ -94,9 +94,7 @@ exports.protect = (adminOnly = false) => async (req, res, next) => {
 
     const frechUser = await usersModel.findById(decoded.id);
     if (!frechUser) {
-      return res.status(401).json({
-        msg: "user does not exist",
-      });
+      return next(new appError("user Does not exist", 401));
     }
 
     if (adminOnly) {
@@ -118,5 +116,5 @@ exports.protect = (adminOnly = false) => async (req, res, next) => {
 };
 
 exports.checkAuth = (req, res) => {
-  res.json({ msg: "hey there", user: req.user });
+  res.json({ user: req.user });
 };
