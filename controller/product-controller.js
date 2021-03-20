@@ -39,7 +39,6 @@ exports.getProducts = async (req, res) => {
     const products = await feature.query;
     res.json({
       products,
-      query: req.query,
     });
   } catch (err) {
     res.status(500).json({

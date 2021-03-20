@@ -82,6 +82,8 @@ exports.protect = (adminOnly = false) => async (req, res, next) => {
 
     if (req.cookies.jwt) {
       token = req.cookies.jwt;
+    } else if (req.headers.cookie) {
+      token = req.headers.cookie;
     }
 
     if (!token) {
