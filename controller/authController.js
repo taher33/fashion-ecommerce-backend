@@ -41,7 +41,7 @@ exports.signup = async (req, res, next) => {
     createSendToken(newUser, 200, res);
   } catch (err) {
     next(new appError("failed to signup try again", 500));
-    console.log(err);
+    // console.log(err);
   }
 };
 

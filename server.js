@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const products = require("./routes/products");
 const users = require("./routes/users");
 const appError = require("./utils/appError");
+const errHandler = require("./controller/errController");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,6 +57,8 @@ app.use("/users", users);
 app.all("*", (req, res, next) => {
   next(new appError(`cant find ${req.originalUrl} on this server`, 404));
 });
+
+app.use(errHandler);
 
 mongoose.connect(
   `mongodb+srv://taher:${
