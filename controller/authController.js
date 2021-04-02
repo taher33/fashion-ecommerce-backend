@@ -30,21 +30,17 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
   try {
     const newUser = await usersModel.create({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConf,
-      role: req.body.role,
     });
     createSendToken(newUser, 200, res);
   } catch (err) {
-    res.status(400).json({
-      msg: "failed",
-      err,
-    });
+    next(new appError("failed to signup try again", 500));
     console.log(err);
   }
 };

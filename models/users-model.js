@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema({
     },
     select: false,
   },
-  //   passwordChanged: Date,
 
   role: { type: String, enum: ["user", "admin", "mod"], default: "user" },
   createdAt: {
