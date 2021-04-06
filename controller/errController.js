@@ -1,7 +1,18 @@
 const appError = require("../utils/appError");
 
 const handleValdiationErr = (err) => {
-  return new appError(err.message, 400);
+  let errors = Object.values(err.errors).map((el) => {
+    return el.message;
+  });
+  // let fields = Object.values(err.errors).map(el => el.path);
+
+  if (errors.length > 1) {
+    const formattedErrors = errors.join(".");
+
+    return new appError(formattedErrors, 400);
+  } else {
+    return new appError(err.message, 400);
+  }
 };
 
 const handleCastErr = (err) => {
@@ -34,25 +45,27 @@ const sendErrProd = (err, res) => {
     });
   } else {
     res.json({
-      message: "something wrong inside the code a bug",
+      message: "something wrong ",
     });
   }
 };
 
 module.exports = (err, req, res, next) => {
+  // console.log("/////////////////////////");
+  // console.log(err);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
-  sendErrDev(err, res);
-  // if (process.env.NODE_ENV === "dev") {
-  //   sendErrDev(err, res);
-  // } else if (process.env.NODE_ENV === "prod") {
-  //   let error = { ...err };
-  //   if (error.name === "CastError") error = handleCastErr(error);
-  //   if (error.code === 11000) error = handleDuplicateErr(error);
-  //   if (!err.message.match("validation failed"))
-  //     error = handleValdiationErr(err);
-  //   if (err.name === "JsonWebTokenError") error = hendleJWTerr();
-  //   if (err.name === "TokenExpiredError") error = hendleJWTerr();
-  //   sendErrProd(error, res);
-  // }
+  // sendErrDev(err, res);
+  if (process.env.NODE_ENV === "dev") {
+    sendErrDev(err, res);
+  } else if (process.env.NODE_ENV === "prod") {
+    let error = { ...err };
+    if (error.name === "CastError") error = handleCastErr(error);
+    if (error.code === 11000) error = handleDuplicateErr(error);
+    if (err.message.match("validation failed"))
+      error = handleValdiationErr(err);
+    if (err.name === "JsonWebTokenError") error = hendleJWTerr();
+    if (err.name === "TokenExpiredError") error = hendleJWTerr();
+    sendErrProd(error, res);
+  }
 };

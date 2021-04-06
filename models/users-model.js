@@ -6,8 +6,11 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "a name is required"],
-    minlength: 3,
-    maxlength: 15,
+    // minLength: {
+    //   value: 3,
+    //   message: "name must be more then 3 charachters",
+    // },
+    minLength: [3, "name must more then 3 charachters"],
   },
   email: {
     type: String,
@@ -18,7 +21,8 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "password is required"],
+    minLength: [8, "min password length is 8 charachters"],
     select: false,
   },
   passwordConfirm: {
@@ -28,7 +32,7 @@ const userSchema = new mongoose.Schema({
       validator: function (el) {
         return el === this.password;
       },
-      message: "password are not the same",
+      message: "password and the confirm password are not the same",
     },
     select: false,
   },

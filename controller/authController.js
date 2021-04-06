@@ -12,7 +12,7 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  console.log(token);
+
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_IN * 3600 * 1000 || 3600 * 1000 * 55
@@ -32,6 +32,7 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = async (req, res, next) => {
   try {
+    // console.log(req.body);
     const newUser = await usersModel.create({
       name: req.body.name,
       email: req.body.email,
@@ -40,8 +41,12 @@ exports.signup = async (req, res, next) => {
     });
     createSendToken(newUser, 200, res);
   } catch (err) {
-    next(new appError("failed to signup try again", 500));
-    // console.log(err);
+    // console.log("///////////////////");
+    // console.log(err.name);
+    next(new appError(`${err.message}`, 500, err.errors));
+    // res.json({
+    //   err: err.errors || "",
+    // });
   }
 };
 

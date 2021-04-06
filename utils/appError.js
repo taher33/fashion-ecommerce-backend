@@ -1,7 +1,8 @@
 class appError extends Error {
-  constructor(message, statusCode) {
-    super(message);
-
+  constructor(message, statusCode, errors = {}) {
+    super();
+    this.errors = errors;
+    this.message = message;
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     // is opretionel means errors of authentication and stuf if false it means err in my code

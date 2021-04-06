@@ -8,6 +8,10 @@ const users = require("./routes/users");
 const appError = require("./utils/appError");
 const errHandler = require("./controller/errController");
 
+const dotenv = require("dotenv").config({
+  path: "./config.env",
+});
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -62,7 +66,7 @@ app.use(errHandler);
 
 mongoose.connect(
   `mongodb+srv://taher:${
-    process.env.MONGO_DB_PASSWORD || "taher"
+    process.env.MONGO_DB_NAME || "taher"
   }@pacebook.f21hd.mongodb.net/${
     process.env.MONGO_DB_PASSWORD || "pacebook"
   }?retryWrites=true&w=majority`,
