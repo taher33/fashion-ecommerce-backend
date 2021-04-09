@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: true,
+    required: [true, "password is required"],
     validate: {
       validator: function (el) {
         return el === this.password;

@@ -32,21 +32,16 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    console.log(req.body);
     const newUser = await usersModel.create({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      passwordConfirm: req.body.passwordConf,
+      passwordConfirm: req.body.passwordConfirm,
     });
     createSendToken(newUser, 200, res);
   } catch (err) {
-    // console.log("///////////////////");
-    // console.log(err.name);
     next(new appError(`${err.message}`, 500, err.errors));
-    // res.json({
-    //   err: err.errors || "",
-    // });
   }
 };
 
