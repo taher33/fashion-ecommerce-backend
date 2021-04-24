@@ -1,3 +1,4 @@
+const fs = require("fs");
 const productModel = require("../models/products-model");
 const apiFeatures = require("../utils/api-features");
 const multer = require("multer");
@@ -51,10 +52,11 @@ exports.createProduct = async (req, res, next) => {
   if (req.file === undefined) {
     next(new appError("must specify an image", 400));
   }
-  const { title, name, type, price, stock } = req.body;
+  const { title, name, type, price, stock, details } = req.body;
   try {
     const newProduct = await productModel.create({
       title,
+      details,
       name,
       type,
       price,
@@ -69,4 +71,46 @@ exports.createProduct = async (req, res, next) => {
     next(new appError("database err", 500));
     console.log(err);
   }
+};
+
+exports.updateProduct = async (req, res, next) => {
+  try {
+    const { product_id, ...changes } = req.body;
+    if (!product_id) return next(new appError("must specify a product"));
+    const updated_product = await productModel.updateOne(changes);
+    res.json({ msg: "updated a product ", updated_product });
+  } catch (error) {
+    next(new appError("err had occured", 400));
+  }
+};
+
+exports.deletProduct = async (req, res, next) => {
+  try {
+    const { product_id } = req.body;
+    if (!product_id) return next(new appError("must specify a product"));
+    await productModel.deleteOne({ _id: product_id });
+    res.json({
+      msg: "item removed",
+    });
+  } catch (err) {
+    next(new appError("an error occured", 400));
+  }
+};
+
+exports.deleteAll = async (req, res) => {
+  const products = await productModel.find();
+  products.forEach((el) => {
+    fs.unlink("imgs/" + el.image, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      //file removed
+    });
+  });
+  await productModel.deleteMany();
+  res.json({
+    msg: "succcess",
+  });
 };

@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
     required: [true, "can not be empty "],
   },
 
-  name: {
+  details: {
     type: String,
     required: [true, "can not be empty "],
   },
@@ -21,10 +21,13 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
+  sold: { type: Number, default: 0 },
+
   image: { type: String, required: [true, "must specify image"] },
 
   createdAt: { type: Date, default: Date.now() },
   modifiedAt: { type: Date },
+  rating: { type: Number, max: 5, min: 0.5, default: 3 },
 });
 
 productSchema.pre("save", function (next) {
