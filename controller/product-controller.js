@@ -3,6 +3,7 @@ const productModel = require("../models/products-model");
 const apiFeatures = require("../utils/api-features");
 const multer = require("multer");
 const appError = require("../utils/appError");
+const orderModel = require("../models/order-model");
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -73,6 +74,30 @@ exports.createProduct = async (req, res, next) => {
   }
 };
 
+exports.buyProduct = async (req, res, next) => {
+  try {
+    const { product_id, amount } = req.body;
+    if (!product_id) return next(new appError("product Id is required", 400));
+    const changed_product = await productModel.findById(product_id);
+    changed_product.stock = changed_product.stock * 1 - amount;
+    changed_product.sold = changed_product.sold * 1 + amount;
+    changed_product.save({ validateBeforeSave: false });
+
+    const newOrder = await orderModel.create({
+      productName: changed_product.title,
+      client: req.user._id,
+      amount,
+      price: amount * changed_product.price,
+    });
+
+    res.json({
+      newOrder,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.updateProduct = async (req, res, next) => {
   try {
     const { product_id, ...changes } = req.body;
@@ -94,6 +119,29 @@ exports.deletProduct = async (req, res, next) => {
     });
   } catch (err) {
     next(new appError("an error occured", 400));
+  }
+};
+
+exports.adminData = async (req, res, next) => {
+  try {
+    const model = await orderModel.aggregate([
+      // { $match: { date: Date.now() } },
+      {
+        $group: {
+          _id: "$day",
+          total: { $sum: "$price" },
+          total_items: { $sum: "$amount" },
+        },
+      },
+      { $sort: { day: 1 } },
+    ]);
+    console.log(model.length);
+    res.json({
+      amount: model.length,
+      model,
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 
