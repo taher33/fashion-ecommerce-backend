@@ -122,29 +122,6 @@ exports.deletProduct = async (req, res, next) => {
   }
 };
 
-exports.adminData = async (req, res, next) => {
-  try {
-    const model = await orderModel.aggregate([
-      // { $match: { date: Date.now() } },
-      {
-        $group: {
-          _id: "$day",
-          total: { $sum: "$price" },
-          total_items: { $sum: "$amount" },
-        },
-      },
-      { $sort: { day: 1 } },
-    ]);
-    console.log(model.length);
-    res.json({
-      amount: model.length,
-      model,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 exports.deleteAll = async (req, res) => {
   const products = await productModel.find();
   products.forEach((el) => {

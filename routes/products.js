@@ -9,11 +9,9 @@ const {
   deletProduct,
   updateProduct,
   buyProduct,
-  adminData,
 } = require("../controller/product-controller");
 
 router.get("/", getProducts);
-router.get("/admin", adminData);
 
 router.post("/", protect(true), uploadPostImg, createProduct);
 router.post("/buy", protect(), buyProduct);

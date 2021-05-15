@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const products = require("./routes/products");
 const users = require("./routes/users");
+const admin = require("./routes/admin");
 const appError = require("./utils/appError");
 const errHandler = require("./controller/errController");
 
@@ -56,6 +57,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/products", products);
+app.use("/admin", admin);
 app.use("/users", users);
 
 app.all("*", (req, res, next) => {
