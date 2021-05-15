@@ -43,9 +43,7 @@ exports.getProducts = async (req, res) => {
       products,
     });
   } catch (err) {
-    res.status(500).json({
-      err,
-    });
+    next(new appError("something went wrong", 500, err.errors));
   }
 };
 
@@ -70,7 +68,6 @@ exports.createProduct = async (req, res, next) => {
     });
   } catch (err) {
     next(new appError("database err", 500));
-    console.log(err);
   }
 };
 
@@ -94,7 +91,7 @@ exports.buyProduct = async (req, res, next) => {
       newOrder,
     });
   } catch (err) {
-    console.log(err);
+    next(new appError("something went wrong ", 500, err.errors));
   }
 };
 
