@@ -31,7 +31,7 @@ const upload = multer({
 
 exports.uploadPostImg = upload.single("picture");
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res, next) => {
   try {
     const feature = new apiFeatures(productModel.find(), req.query)
       .filter()
@@ -42,6 +42,25 @@ exports.getProducts = async (req, res) => {
     res.json({
       products,
     });
+  } catch (err) {
+    next(new appError("something went wrong", 500, err.errors));
+  }
+};
+
+exports.getOneProduct = async (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.params.id);
+  if (!id) return next(new appError("provide an id", 400));
+  try {
+    const product = await productModel.findById(id);
+    res.json({
+      product,
+    });
+
+    if (!product)
+      return next(
+        new appError("the id you provided did not match any records", 404)
+      );
   } catch (err) {
     next(new appError("something went wrong", 500, err.errors));
   }

@@ -9,9 +9,11 @@ const {
   deletProduct,
   updateProduct,
   buyProduct,
+  getOneProduct,
 } = require("../controller/product-controller");
 
 router.get("/", getProducts);
+router.get("/single/:id", getOneProduct);
 
 router.post("/", protect(true), uploadPostImg, createProduct);
 router.post("/buy", protect(), buyProduct);

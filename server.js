@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-// const morgan = require("morgan");
+const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+
 const mongoose = require("mongoose");
 const products = require("./routes/products");
 const users = require("./routes/users");
@@ -44,8 +45,7 @@ app.use(
   })
 );
 
-// if (process.env.NODE_ENV === "dev")
-// app.use(morgan("dev"));
+if (process.env.NODE_ENV === "dev") app.use(morgan("dev"));
 
 app.use(cookieParser());
 
