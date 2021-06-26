@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const mongoose = require("mongoose");
 const products = require("./routes/products");
@@ -52,6 +53,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // app.use(express.static(path.join(__dirname, "imgs")));
+app.use(express.static("imgs"));
 app.get("/", (req, res) => {
   res.send("hey there");
 });
