@@ -5,8 +5,11 @@ const { promisify } = require("util");
 const appError = require("../utils/appError");
 
 const signToken = (id) => {
+  secure = false;
+  if (process.env.NODE_ENV === prod) secure = true;
   return jwt.sign({ id }, process.env.JWT_SECRET || "cute cat", {
     expiresIn: process.env.JWT_EXPIRES_IN || 3600 * 1000 * 24,
+    secure,
   });
 };
 
@@ -71,46 +74,48 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.protect = (adminOnly = false) => async (req, res, next) => {
-  try {
-    let token;
+exports.protect =
+  (adminOnly = false) =>
+  async (req, res, next) => {
+    try {
+      let token;
 
-    if (req.cookies.jwt) {
-      token = req.cookies.jwt;
-    } else if (req.headers.cookie) {
-      token = req.headers.cookie;
-    }
-
-    if (!token) {
-      return next(new appError("login please", 401));
-    }
-
-    // jwt.verify(token,"cute cat", (err, result) => {});
-
-    const decoded = await promisify(jwt.verify)(token, "cute cat");
-
-    const frechUser = await usersModel.findById(decoded.id);
-    if (!frechUser) {
-      return next(new appError("user Does not exist", 401));
-    }
-
-    if (adminOnly) {
-      if (frechUser.role === "user") {
-        return res.status(403).json({
-          msg: "u are not allowed access",
-        });
+      if (req.cookies.jwt) {
+        token = req.cookies.jwt;
+      } else if (req.headers.cookie) {
+        token = req.headers.cookie;
       }
+
+      if (!token) {
+        return next(new appError("login please", 401));
+      }
+
+      // jwt.verify(token,"cute cat", (err, result) => {});
+
+      const decoded = await promisify(jwt.verify)(token, "cute cat");
+
+      const frechUser = await usersModel.findById(decoded.id);
+      if (!frechUser) {
+        return next(new appError("user Does not exist", 401));
+      }
+
+      if (adminOnly) {
+        if (frechUser.role === "user") {
+          return res.status(403).json({
+            msg: "u are not allowed access",
+          });
+        }
+      }
+      // if (!frechUser.checkPassChanged(token.iat)) {
+      //   return next(new appError("plz login again u changed password", 401));
+      // }
+      req.user = frechUser;
+      next();
+    } catch (err) {
+      console.log(err);
+      res.json({ err });
     }
-    // if (!frechUser.checkPassChanged(token.iat)) {
-    //   return next(new appError("plz login again u changed password", 401));
-    // }
-    req.user = frechUser;
-    next();
-  } catch (err) {
-    console.log(err);
-    res.json({ err });
-  }
-};
+  };
 
 exports.checkAuth = (req, res) => {
   res.json({ user: req.user });

@@ -55,14 +55,14 @@ exports.getOneProduct = async (req, res, next) => {
   if (!id) return next(new appError("provide an id", 400));
   try {
     const product = await productModel.findById(id);
-    res.json({
-      product,
-    });
 
     if (!product)
       return next(
         new appError("the id you provided did not match any records", 404)
       );
+    res.json({
+      product,
+    });
   } catch (err) {
     next(new appError("something went wrong", 500, err.errors));
   }
