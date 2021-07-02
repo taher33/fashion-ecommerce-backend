@@ -5,23 +5,22 @@ const { promisify } = require("util");
 const appError = require("../utils/appError");
 
 const signToken = (id) => {
-  secure = false;
-  if (process.env.NODE_ENV === "prod") secure = true;
   return jwt.sign({ id }, process.env.JWT_SECRET || "cute cat", {
     expiresIn: process.env.JWT_EXPIRES_IN || 3600 * 1000 * 24,
-    secure,
   });
 };
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-
+  secure = false;
+  if (process.env.NODE_ENV === "prod") secure = true;
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_IN * 3600 * 1000 || 3600 * 1000 * 55
     ),
     maxAge: process.env.JWT_COOKIE_IN * 3600 * 1000 || 3600 * 1000 * 55,
     httpOnly: true,
+    secure,
   };
   //   if (process.env.NODE_ENV === "prod") cookieOptions.secure = true;
 
