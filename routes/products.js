@@ -20,7 +20,7 @@ router.post("/buy", protect(), buyProduct);
 
 router.patch("/", protect(true), updateProduct);
 
-router.delete("/", protect(true), deletProduct);
+// router.delete("/", protect(true), deletProduct);
 router.delete("/", protect(true), deleteAll);
 
 module.exports = router;

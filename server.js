@@ -46,8 +46,7 @@ app.use(
   })
 );
 
-// if (process.env.NODE_ENV === "dev")
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "dev") app.use(morgan("dev"));
 
 app.use(cookieParser());
 

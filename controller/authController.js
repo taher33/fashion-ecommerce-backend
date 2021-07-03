@@ -21,7 +21,7 @@ const createSendToken = (user, statusCode, res) => {
     maxAge: process.env.JWT_COOKIE_IN * 3600 * 1000 || 3600 * 1000 * 55,
     httpOnly: true,
     sameSite: "none",
-    secure: true,
+    secure,
   };
   //   if (process.env.NODE_ENV === "prod") cookieOptions.secure = true;
 
