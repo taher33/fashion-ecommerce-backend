@@ -32,7 +32,6 @@ const upload = multer({
 exports.uploadPostImg = upload.single("picture");
 
 exports.getProducts = async (req, res, next) => {
-  console.log(req.query);
   try {
     const feature = new apiFeatures(productModel.find(), req.query)
       .filter()
@@ -51,7 +50,6 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getOneProduct = async (req, res, next) => {
   const { id } = req.params;
-  console.log(req.params.id);
   if (!id) return next(new appError("provide an id", 400));
   try {
     const product = await productModel.findById(id);
@@ -72,6 +70,7 @@ exports.createProduct = async (req, res, next) => {
   if (req.file === undefined) {
     next(new appError("must specify an image", 400));
   }
+
   const { title, name, type, price, stock, details } = req.body;
   try {
     const newProduct = await productModel.create({
@@ -88,7 +87,8 @@ exports.createProduct = async (req, res, next) => {
       newProduct,
     });
   } catch (err) {
-    next(new appError("database err", 500));
+    // res.json(err);
+    next(new appError(err.message, 500, err.errors));
   }
 };
 

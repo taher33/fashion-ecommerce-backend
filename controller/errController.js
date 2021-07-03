@@ -39,7 +39,7 @@ const sendErrProd = (err, res) => {
     });
   } else {
     res.json({
-      message: "something wrong ",
+      message: "something went wrong ",
     });
   }
 };
@@ -54,10 +54,14 @@ module.exports = (err, req, res, next) => {
     let error = { ...err };
     if (error.name === "CastError") error = handleCastErr(error);
     if (error.code === 11000) error = handleDuplicateErr(error);
-    if (err.message.match("validation failed"))
+    if (
+      err.message.match("validation failed") ||
+      err.name.match("ValidationError")
+    )
       error = handleValdiationErr(err);
     if (err.name === "JsonWebTokenError") error = hendleJWTerr();
     if (err.name === "TokenExpiredError") error = hendleJWTerr();
+    console.log("error:", err.message);
     sendErrProd(error, res);
   }
 };
