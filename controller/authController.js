@@ -113,7 +113,7 @@ exports.protect =
       next();
     } catch (err) {
       console.log(err);
-      res.json({ err });
+      next(new appError(err.message, err.statusCode, err.errors));
     }
   };
 

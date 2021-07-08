@@ -7,6 +7,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const products = require("./routes/products");
 const users = require("./routes/users");
+const cart = require("./routes/cart");
 const admin = require("./routes/admin");
 const appError = require("./utils/appError");
 const errHandler = require("./controller/errController");
@@ -61,6 +62,7 @@ app.get("/", (req, res) => {
 app.use("/products", products);
 app.use("/admin", admin);
 app.use("/users", users);
+app.use("/cart", cart);
 
 app.all("*", (req, res, next) => {
   next(new appError(`cant find ${req.originalUrl} on this server`, 404));
