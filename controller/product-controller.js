@@ -32,7 +32,6 @@ const upload = multer({
 exports.uploadPostImg = upload.single("picture");
 
 exports.getProducts = async (req, res, next) => {
-  console.log(req.query);
   try {
     const feature = new apiFeatures(productModel.find(), req.query)
       .filter()
