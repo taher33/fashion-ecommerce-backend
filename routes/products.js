@@ -10,12 +10,13 @@ const {
   updateProduct,
   buyProduct,
   getOneProduct,
+  createDirectory,
 } = require("../controller/product-controller");
 
 router.get("/", getProducts);
 router.get("/single/:id", getOneProduct);
 
-router.post("/", protect(true), uploadPostImg, createProduct);
+router.post("/", protect(true), createDirectory, uploadPostImg, createProduct);
 router.post("/buy", protect(), buyProduct);
 
 router.patch("/", protect(true), updateProduct);

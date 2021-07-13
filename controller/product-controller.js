@@ -5,6 +5,19 @@ const multer = require("multer");
 const appError = require("../utils/appError");
 const orderModel = require("../models/order-model");
 
+exports.createDirectory = async (req, res, next) => {
+  try {
+    let DirectoryExist = fs.existsSync("./imgs");
+    if (!DirectoryExist) {
+      fs.mkdirSync("./imgs");
+    }
+
+    next();
+  } catch (error) {
+    next(new appError(error.message, 500));
+  }
+};
+
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "imgs");
