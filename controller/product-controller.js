@@ -4,6 +4,8 @@ const apiFeatures = require("../utils/api-features");
 const multer = require("multer");
 const appError = require("../utils/appError");
 const orderModel = require("../models/order-model");
+const Stripe = require("stripe");
+const stripe = new Stripe(process.env.STRIPE_KEY);
 
 exports.createDirectory = async (req, res, next) => {
   try {
@@ -101,7 +103,6 @@ exports.createProduct = async (req, res, next) => {
       newProduct,
     });
   } catch (err) {
-    // res.json(err);
     next(new appError(err.message, 500, err.errors));
   }
 };
@@ -111,22 +112,46 @@ exports.buyProduct = async (req, res, next) => {
     const { product_id, amount } = req.body;
     if (!product_id) return next(new appError("product Id is required", 400));
     const changed_product = await productModel.findById(product_id);
+    if (!changed_product)
+      return next(new appError("product does not exist", 404));
+    //stripe payment
+    const customer = await stripe.customers.create(
+      {
+        email: req.user.email,
+        source: req.body.token.id,
+      },
+      { apiKey: process.env.STRIPE_KEY }
+    );
+
+    const stripeRes = await stripe.charges.create(
+      {
+        amount: changed_product.price * 100,
+        currency: "usd",
+        customer: customer.id,
+        receipt_email: req.user.email,
+        description: changed_product.title,
+      },
+      { apiKey: process.env.STRIPE_KEY }
+    );
+
+    //changing the product
     changed_product.stock = changed_product.stock * 1 - amount;
     changed_product.sold = changed_product.sold * 1 + amount;
     changed_product.save({ validateBeforeSave: false });
-
-    const newOrder = await orderModel.create({
-      productName: changed_product.title,
-      client: req.user._id,
-      amount,
-      price: amount * changed_product.price,
-    });
+    //creating a new order for the admin dashboard
+    // const newOrder = await orderModel.create({
+    //   productName: changed_product.title,
+    //   client: req.user._id,
+    //   amount,
+    //   price: amount * changed_product.price,
+    // });
 
     res.json({
-      newOrder,
+      // newOrder,
+      stripeRes,
     });
   } catch (err) {
-    next(new appError("something went wrong ", 500, err.errors));
+    next(new appError(err.message, 500, err.errors));
   }
 };
 

@@ -8,8 +8,14 @@ class apiFeatures {
     let newQuery = {
       ...this.queryStr,
     };
-    const exclude = ["sort", "page", "limit", "fields"];
+    let exclude;
+    if (newQuery.type !== "new") {
+      exclude = ["sort", "page", "limit", "fields"];
+    } else {
+      exclude = ["sort", "page", "limit", "fields", "type"];
+    }
     exclude.forEach((el) => delete newQuery[el]);
+
     this.query = this.query.find(newQuery);
     // if (!newQuery.user && this.user.People_I_follow.length !== 0) {
     //   this.query = this.query.find({ user: this.user.following });
