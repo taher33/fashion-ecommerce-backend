@@ -3,8 +3,8 @@ const productModel = require("../models/products-model");
 const apiFeatures = require("../utils/api-features");
 const multer = require("multer");
 const appError = require("../utils/appError");
-const orderModel = require("../models/order-model");
 const Stripe = require("stripe");
+const cloudinary = require("../utils/cloudinary");
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
 exports.createDirectory = async (req, res, next) => {
@@ -86,9 +86,12 @@ exports.createProduct = async (req, res, next) => {
   if (req.file === undefined) {
     next(new appError("must specify an image", 400));
   }
-
   const { title, name, type, price, stock, details } = req.body;
   try {
+    //cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: "ml_default",
+    });
     const newProduct = await productModel.create({
       title,
       details,
@@ -96,13 +99,14 @@ exports.createProduct = async (req, res, next) => {
       type,
       price,
       stock,
-      image: req.file.filename,
+      image: result.secure_url,
     });
 
     res.status(201).json({
       newProduct,
     });
   } catch (err) {
+    console.log(err);
     next(new appError(err.message, 500, err.errors));
   }
 };

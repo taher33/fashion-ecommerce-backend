@@ -23,7 +23,6 @@ const whiteList = [
   "https://fashion-ecommerce-lime.vercel.app",
   "fashion-ecommerce-taher33.vercel.app",
   "fashion-ecommerce-git-main-taher33.vercel.app",
-  "https://fashion-ecommerce-73s3nknkq-taher33.vercel.app",
   "http://localhost:3000",
 ];
 
